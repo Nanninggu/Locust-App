@@ -1,11 +1,30 @@
-`application.properties` 파일에서 로컬 영역의 H2 데이터베이스와 AWS 환경의 RDS를 사용하는 방법을 설명하겠습니다.
+```markdown
+# 프로젝트 이름
 
-### 로컬 영역의 H2 데이터베이스 사용
+이 프로젝트는 Spring Boot를 사용하여 구현된 웹 애플리케이션입니다. 이 애플리케이션은 사용자 인증 및 API 문서화를 포함한 여러 기능을 제공합니다.
 
-로컬 영역에서 H2 데이터베이스를 사용하려면 다음과 같이 `application.properties` 파일을 설정합니다:
+## 주요 기능
+
+- **사용자 인증**: Spring Security를 사용하여 사용자 인증을 처리합니다.
+- **API 문서화**: Swagger를 사용하여 API 문서를 자동으로 생성합니다.
+- **H2 데이터베이스**: H2 인메모리 데이터베이스를 사용하여 애플리케이션 데이터를 저장합니다.
+
+## 기술 스택
+
+- **Java**
+- **Spring Boot**
+- **Spring Security**
+- **Swagger**
+- **H2 Database**
+- **Gradle**
+
+## 설정
+
+### H2 데이터베이스 설정
+
+`src/main/resources/application.properties` 파일에서 H2 데이터베이스 설정을 확인할 수 있습니다.
 
 ```ini
-# H2 In-Memory DB Connection
 spring.datasource.url=jdbc:h2:mem:testdb
 spring.datasource.driverClassName=org.h2.Driver
 spring.datasource.username=sa
@@ -15,20 +34,63 @@ spring.h2.console.settings.web-allow-others=true
 spring.datasource.initialization-mode=always
 ```
 
-이 설정은 H2 인메모리 데이터베이스를 사용하며, H2 콘솔을 통해 웹에서 접근할 수 있도록 합니다.
+### Swagger 설정
 
-### AWS 환경의 RDS 사용
+Swagger 설정은 `src/main/java/com/example/demo/config/SwaggerConfig.java` 파일에서 확인할 수 있습니다.
 
-AWS 환경에서 RDS를 사용하려면 다음과 같이 `application.properties` 파일을 설정합니다:
+```java
+@Configuration
+public class SwaggerConfig {
 
-```ini
-# AWS RDS PostgreSQL DB Connection
-spring.datasource.driver-class-name=org.postgresql.Driver
-spring.datasource.url=jdbc:postgresql://<your-rds-endpoint>:5432/<your-database-name>
-spring.datasource.username=<your-username>
-spring.datasource.password=<your-password>
+    @Bean
+    public GroupedOpenApi publicApi() {
+        return GroupedOpenApi.builder()
+                .group("public")
+                .pathsToMatch("/**")
+                .build();
+    }
+
+    @Bean
+    public OpenAPI customOpenAPI() {
+        return new OpenAPI()
+                .info(new Info()
+                        .title("API Documentation")
+                        .version("1.0")
+                        .description("API documentation for the application"));
+    }
+}
 ```
 
-이 설정은 AWS RDS PostgreSQL 데이터베이스를 사용합니다. `<your-rds-endpoint>`, `<your-database-name>`, `<your-username>`, `<your-password>` 부분을 실제 RDS 인스턴스의 정보로 대체해야 합니다.
+## 실행 방법
 
-이렇게 설정하면 로컬에서는 H2 데이터베이스를, AWS 환경에서는 RDS를 사용할 수 있습니다. 필요에 따라 프로파일을 사용하여 환경별로 설정을 분리할 수도 있습니다.
+1. 프로젝트를 클론합니다.
+   ```sh
+   git clone https://github.com/your-repo/project-name.git
+   ```
+2. 프로젝트 디렉토리로 이동합니다.
+   ```sh
+   cd project-name
+   ```
+3. Gradle을 사용하여 애플리케이션을 빌드하고 실행합니다.
+   ```sh
+   ./gradlew bootRun
+   ```
+4. 애플리케이션이 실행되면, 브라우저에서 `http://localhost:8080`으로 접속합니다.
+
+## API 엔드포인트
+
+- **로그인**: `/login` (POST)
+- **H2 콘솔**: `/h2-console`
+- **Swagger UI**: `/swagger-ui.html`
+
+## 예외 처리
+
+사용자 정의 예외는 `com.example.demo.exception.UserNotFoundException` 클래스에서 정의됩니다.
+
+```java
+public class UserNotFoundException extends RuntimeException {
+    public UserNotFoundException(String message) {
+        super(message);
+    }
+}
+```

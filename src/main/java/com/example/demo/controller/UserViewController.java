@@ -43,7 +43,7 @@ public class UserViewController {
 
     // 사용자 정보 수정
     @GetMapping("/edit/{id}")
-    public String editUserForm(@PathVariable Long id, Model model ) {
+    public String editUserForm(@PathVariable Long id, Model model) {
         User user = userService.getUserById(id);
         model.addAttribute("user", user);
         return "editUser";

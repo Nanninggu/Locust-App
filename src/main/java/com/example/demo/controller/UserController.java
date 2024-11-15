@@ -4,6 +4,7 @@ import com.example.demo.dto.User;
 import com.example.demo.exception.UserNotFoundException;
 import com.example.demo.service.UserService;
 import com.example.demo.util.DateUtil;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -30,8 +31,8 @@ public class UserController {
 
     // 사용자 생성
     @PostMapping("/create")
-    public User createUser(@RequestParam String name,
-                           @RequestParam String email) {
+    public User createUser(@Parameter(description = "사용자 이름", example = "John Doe") @RequestParam(defaultValue = "John Doe") String name,
+                           @Parameter(description = "사용자 이메일", example = "john.doe@example.com") @RequestParam(defaultValue = "john.doe@example.com") String email) {
         // UserService를 통해 새로운 사용자를 생성합니다.
         return userService.createUser(name, email);
     }
@@ -40,8 +41,8 @@ public class UserController {
     // 리소스의 고유 식별자를 나타낼 때 주로 사용됩니다. 필터링, 검색, 페이징 등의 추가적인 정보를 전달할 때 주로 사용됩니다.
     @PutMapping("/{id}")
     public User updateUser(@PathVariable Long id,
-                           @RequestParam String name,
-                           @RequestParam String email) {
+                           @Parameter(description = "사용자 이름", example = "Jane Doe") @RequestParam String name,
+                           @Parameter(description = "사용자 이메일", example = "jane.doe@example.com") @RequestParam String email) {
         // UserService를 통해 사용자의 정보를 업데이트합니다.
         return userService.updateUser(id, name, email);
     }

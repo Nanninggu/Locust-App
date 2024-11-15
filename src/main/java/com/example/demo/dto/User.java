@@ -5,7 +5,6 @@ public class User {
     private String name;
     private String email;
 
-    // Getter, Setter, toString 메서드 생략
     public Long getId() {
         return id;
     }
